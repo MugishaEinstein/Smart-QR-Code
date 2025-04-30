@@ -1,39 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>QR Code Generator</title>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
   <style>
+    :root {
+      --clr-bg: #f0f2f5;
+      --clr-card: #ffffff;
+      --clr-primary: #4f46e5;
+      --clr-primary-light: #6366f1;
+      --clr-text: #1f2937;
+      --clr-text-light: #6b7280;
+      --clr-shadow: rgba(0, 0, 0, 0.1);
+      --transition: 0.3s ease;
+    }
+    [data-theme="dark"] {
+      --clr-bg: #1f2937;
+      --clr-card: #374151;
+      --clr-primary: #8b5cf6;
+      --clr-primary-light: #a78bfa;
+      --clr-text: #f3f4f6;
+      --clr-text-light: #9ca3af;
+      --clr-shadow: rgba(0, 0, 0, 0.5);
+    }
+
+    /* Base (mobile-first) */
+    *, *::before, *::after { box-sizing: border-box; transition: var(--transition); }
     body {
-      font-family: sans-serif;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--clr-bg);
+      color: var(--clr-text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    .theme-toggle {
+      position: fixed;
+      top: 0.75rem;
+      right: 0.75rem;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--clr-text-light);
+    }
+    .card {
+      background: var(--clr-card);
+      border-radius: 1rem;
+      box-shadow: 0 8px 24px var(--clr-shadow);
+      width: 100%;
+      max-width: 360px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .input-group {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 2em;
+      gap: 0.75rem;
     }
-    input {
-      padding: 0.5em;
-      width: 300px;
-      margin-bottom: 1em;
+    .input-group input {
+      padding: 0.75rem 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      background: var(--clr-bg);
+      color: var(--clr-text);
+      width: 100%;
+    }
+    .input-group button {
+      padding: 0.75rem 1rem;
+      background: var(--clr-primary);
+      color: #fff;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .input-group button:hover {
+      background: var(--clr-primary-light);
     }
     #qrcode {
-      margin-top: 1em;
+      margin-top: 1.25rem;
+      display: flex;
+      justify-content: center;
+    }
+    #qrcode canvas {
+      width: 100% !important;
+      height: auto !important;
+      max-width: 220px;
+    }
+
+    /* Larger screens */
+    @media (min-width: 600px) {
+      .card {
+        max-width: 400px;
+        padding: 2rem;
+      }
+      h1 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+      .input-group {
+        flex-direction: row;
+      }
+      .input-group input {
+        border-radius: 0.5rem 0 0 0.5rem;
+      }
+      .input-group button {
+        border-radius: 0 0.5rem 0.5rem 0;
+      }
+      #qrcode canvas {
+        max-width: 256px;
+      }
     }
   </style>
 </head>
-<body>
-  <h2>QR Code Generator</h2>
-  <input type="text" id="url" placeholder="Enter URL"  />
-  <button onclick="generateQRCode()">Generate QR Code</button>
-  <div id="qrcode"></div>
+<body data-theme="light">
+  <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+  <div class="card">
+    <h1>Generate Your QR Code</h1>
+    <div class="input-group">
+      <input type="text" id="url" placeholder="Enter URL"  />
+      <button onclick="generateQRCode()">Generate</button>
+    </div>
+    <div id="qrcode"></div>
+  </div>
 
   <script>
     function generateQRCode() {
-      const url = document.getElementById("url").value;
+      const url = document.getElementById("url").value.trim();
       const qrContainer = document.getElementById("qrcode");
-      qrContainer.innerHTML = ""; // Clear previous code
-
+      qrContainer.innerHTML = "";
+      if (!url) {
+        alert("Please enter a valid URL!");
+        return;
+      }
       new QRCode(qrContainer, {
         text: url,
         width: 256,
@@ -42,6 +151,12 @@
         colorLight : "#ffffff",
         correctLevel : QRCode.CorrectLevel.H
       });
+    }
+
+    function toggleTheme() {
+      const root = document.body;
+      const current = root.getAttribute("data-theme");
+      root.setAttribute("data-theme", current === "light" ? "dark" : "light");
     }
   </script>
 </body>
