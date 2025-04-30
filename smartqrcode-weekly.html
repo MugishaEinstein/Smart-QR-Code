@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Weekly Redirect</title>
+  <script>
+    // Get ISO week number using UTC
+    function getUTCWeekNumber(date) {
+      date = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+      const dayNum = date.getUTCDay() || 7;
+      date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+      const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+      const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+      return weekNo;
+    }
+
+    // Your weekly redirects
+    const redirects = {
+      18: 'https://www.nostr.africa/contact/', // Week 18 starts on Saturday, April 26, 2025
+      19: 'https://www.nostr.africa/gallery/', // Week 19 starts on Saturday, May 3, 2025
+      20: 'https://www.nostr.africa/services/',
+      // Add more weeks here
+    };
+
+    const now = new Date();
+    const currentWeek = getUTCWeekNumber(now);
+    const target = redirects[currentWeek];
+
+    if (target) {
+      window.location.href = target;
+    } else {
+      document.write("<h2>No redirect set for this week.</h2>");
+    }
+  </script>
+</head>
+<body>
+  <noscript>
+    <p>Please enable JavaScript to be redirected.</p>
+  </noscript>
+</body>
+</html>

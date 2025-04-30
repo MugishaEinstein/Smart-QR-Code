@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sequential Redirect</title>
+  <script>
+    // Define the sequence of URLs
+    const redirectSequence = [
+      'https://www.nostr.africa/contact/',
+      'https://www.nostr.africa/gallery/',
+      'https://www.nostr.africa/services/',
+      // Add more if needed
+    ];
+
+    // Retrieve how many times user has visited
+    const visitKey = 'redirect_visit_count';
+    let visitCount = parseInt(localStorage.getItem(visitKey)) || 0;
+
+    // Determine the next URL
+    const target = redirectSequence[visitCount];
+
+    if (target) {
+      // Increment visit count and store it
+      localStorage.setItem(visitKey, visitCount + 1);
+      window.location.href = target;
+    } else {
+      document.write("<h2>No more redirects in the sequence.</h2>");
+    }
+  </script>
+</head>
+<body>
+  <noscript>
+    <p>Please enable JavaScript to be redirected.</p>
+  </noscript>
+</body>
+</html>
