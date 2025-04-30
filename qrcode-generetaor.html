@@ -97,6 +97,20 @@
       height: auto !important;
       max-width: 220px;
     }
+    #download-btn {
+      margin-top: 1rem;
+      display: none;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      background: var(--clr-primary);
+      color: #fff;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    #download-btn:hover {
+      background: var(--clr-primary-light);
+    }
 
     /* Larger screens */
     @media (min-width: 600px) {
@@ -128,29 +142,52 @@
   <div class="card">
     <h1>Generate Your QR Code</h1>
     <div class="input-group">
-      <input type="text" id="url" placeholder="Enter URL"  />
+      <input type="text" id="url" placeholder="Enter URL" />
       <button onclick="generateQRCode()">Generate</button>
     </div>
     <div id="qrcode"></div>
+    <a id="download-btn" download="qrcode.png">Download PNG</a>
   </div>
 
   <script>
     function generateQRCode() {
       const url = document.getElementById("url").value.trim();
       const qrContainer = document.getElementById("qrcode");
+      const downloadBtn = document.getElementById("download-btn");
       qrContainer.innerHTML = "";
+      downloadBtn.style.display = "none";
+
       if (!url) {
         alert("Please enter a valid URL!");
         return;
       }
-      new QRCode(qrContainer, {
+
+      // Create QR code in a hidden large canvas for high resolution
+      const tempDiv = document.createElement("div");
+      const qr = new QRCode(tempDiv, {
         text: url,
-        width: 256,
-        height: 256,
-        colorDark : "#000000",
-        colorLight : "#ffffff",
+        width: 512,
+        height: 512,
         correctLevel : QRCode.CorrectLevel.H
       });
+
+      // Wait for QR code to render
+      setTimeout(() => {
+        // Extract the generated <img> or <canvas>
+        const img = tempDiv.querySelector("img") || tempDiv.querySelector("canvas");
+        // Show scaled-down version in UI
+        qrContainer.appendChild(img.cloneNode());
+
+        // Prepare download link
+        let dataURL;
+        if (img.tagName.toLowerCase() === "img") {
+          dataURL = img.src;
+        } else {
+          dataURL = img.toDataURL("image/png");
+        }
+        downloadBtn.href = dataURL;
+        downloadBtn.style.display = "inline-block";
+      }, 100);
     }
 
     function toggleTheme() {
